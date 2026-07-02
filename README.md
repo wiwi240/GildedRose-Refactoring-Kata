@@ -6,7 +6,7 @@ The original multi-language repository was reduced to the files required for thi
 
 - `js-jasmine/src/gilded_rose.js`: inventory update logic
 - `js-jasmine/spec/gilded_rose_spec.js`: unit tests
-- `GildedRoseRequirements_fr.md`: original French exercise statement
+- `docs/GildedRoseRequirements_fr.md`: original French exercise statement
 
 ## Project Goal
 
@@ -84,7 +84,96 @@ Expected result:
 13 specs, 0 failures
 ```
 
+## Correction
+
+This section is intended for a reviewer who wants to validate the exercise quickly.
+
+### What the reviewer should check
+
+- the kata scope is limited to the JavaScript Jasmine version
+- the legacy logic was refactored in `js-jasmine/src/gilded_rose.js`
+- `Conjured` items are supported
+- tests are present in `js-jasmine/spec/gilded_rose_spec.js`
+- the `Item` class shape was preserved
+
+### Project structure
+
+```text
+.
+├── README.md
+├── docs/
+│   └── GildedRoseRequirements_fr.md
+└── js-jasmine/
+    ├── package.json
+    ├── pnpm-lock.yaml
+    ├── spec/
+    │   ├── gilded_rose_spec.js
+    │   └── texttest_fixture.js
+    └── src/
+        └── gilded_rose.js
+```
+
+### Prerequisites
+
+- Node.js installed
+- pnpm installed
+
+Recommended verification commands:
+
+```bash
+node -v
+pnpm -v
+```
+
+### Installation
+
+From the repository root:
+
+```bash
+cd js-jasmine
+pnpm install
+```
+
+### Run the test suite
+
+```bash
+cd js-jasmine
+pnpm test
+```
+
+Expected output:
+
+```text
+13 specs, 0 failures
+```
+
+### Files to review first
+
+- `js-jasmine/src/gilded_rose.js`
+- `js-jasmine/spec/gilded_rose_spec.js`
+- `docs/GildedRoseRequirements_fr.md`
+
+### Functional expectations
+
+The implementation should respect these rules:
+
+- normal items degrade by `1`
+- after the sell date, normal items degrade by `2`
+- quality never goes below `0`
+- `Aged Brie` increases in quality
+- `Aged Brie` increases faster after the sell date
+- quality never goes above `50`
+- `Sulfuras` never changes and stays at `80`
+- `Backstage passes` increase by `1`, `2`, or `3` depending on `sellIn`
+- `Backstage passes` drop to `0` after the concert
+- `Conjured` items degrade twice as fast as normal items
+
+### Reviewer note
+
+`texttest_fixture.js` is kept as legacy reference material from the original kata, but the actual validation work is done through `gilded_rose_spec.js`.
+
 ## Notes
 
 - The `Item` class was left unchanged, as required by the kata.
 - The repository is intentionally minimal and keeps only the files needed for this JavaScript/Jasmine exercise.
+- Source code lives in `js-jasmine/` and supporting documentation lives in `docs/`.
