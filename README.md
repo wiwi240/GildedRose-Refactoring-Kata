@@ -1,55 +1,90 @@
-_Support this and all my katas via [Patreon](https://www.patreon.com/EmilyBache)_
-
 # Gilded Rose Refactoring Kata
 
-You can find out more about this exercise in my YouTube video [Why Developers LOVE The Gilded Rose Kata](https://youtu.be/Mt4XpGxigT4). I also have a video of a worked solution in Java - [Gilded Rose Kata, Hands-on](https://youtu.be/OdnV8hc9L7I)
+This repository contains a focused JavaScript solution to the Gilded Rose kata using Jasmine for testing.
 
-I use this kata as part of my work as a technical coach. I wrote a lot about the coaching method I use in this book [Technical Agile Coaching with the Samman method](https://leanpub.com/techagilecoach). A while back I wrote this article ["Writing Good Tests for the Gilded Rose Kata"](http://coding-is-like-cooking.info/2013/03/writing-good-tests-for-the-gilded-rose-kata/) about how you could use this kata in a [coding dojo](https://leanpub.com/codingdojohandbook).
+The original multi-language repository was reduced to the files required for this exercise:
 
+- `js-jasmine/src/gilded_rose.js`: inventory update logic
+- `js-jasmine/spec/gilded_rose_spec.js`: unit tests
+- `GildedRoseRequirements_fr.md`: original French exercise statement
 
-## How to use this Kata
+## Project Goal
 
-The simplest way is to just clone the code and start hacking away improving the design. You'll want to look at the ["Gilded Rose Requirements"](https://github.com/emilybache/GildedRose-Refactoring-Kata/blob/main/GildedRoseRequirements.md) which explains what the code is for. I strongly advise you that you'll also need some tests if you want to make sure you don't break the code while you refactor.
+The goal of this kata is to improve a legacy inventory update system while preserving its business rules.
 
-You could write some unit tests yourself, using the requirements to identify suitable test cases. I've provided a failing unit test in a popular test framework as a starting point for most languages.
+This implementation covers:
 
-Alternatively, use the Approval tests provided in this repository. (Read more about that in the section "Text-based Approval Testing").
+- refactoring the original nested conditional logic
+- preserving the existing `Item` shape
+- adding support for `Conjured` items
+- validating the behavior with automated tests
 
-The idea of the exercise is to do some deliberate practice, and improve your skills at designing test cases and refactoring. The idea is not to re-write the code from scratch, but rather to practice taking small steps, running the tests often, and incrementally improving the design. 
+## Business Rules
 
-### Gilded Rose Requirements in other languages 
+Each item has:
 
-- [English](GildedRoseRequirements.md)
-- [Español](GildedRoseRequirements_es.md)
-- [Français](GildedRoseRequirements_fr.md)
-- [Italiano](GildedRoseRequirements_it.md)
-- [日本語](GildedRoseRequirements_jp.md)
-- [Português](GildedRoseRequirements_pt-BR.md)
-- [Русский](GildedRoseRequirements_ru.md)
-- [Українська](GildedRoseRequirements_ua.md)
-- [ไทย](GildedRoseRequirements_th.md)
-- [中文](GildedRoseRequirements_zh.txt)
-- [한국어](GildedRoseRequirements_kr.md)
-- [German](GildedRoseRequirements_de.md)
-- [Euskara](GildedRoseRequirements_eu.md)
-- [Galego](GildedRoseRequirements_gl.md)
+- `sellIn`: the number of days left to sell the item
+- `quality`: how valuable the item is
 
-## Text-Based Approval Testing
+Rules:
 
-Most language versions of this code have a [TextTest](https://texttest.org) fixture for Approval testing. For information about this, see the [TextTests README](https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/main/texttests)
+- normal items lose `1` quality per day
+- once the sell date has passed, normal items lose `2` quality per day
+- quality is never negative
+- `Aged Brie` increases in quality over time
+- `Aged Brie` increases twice as fast after the sell date
+- quality never goes above `50`
+- `Sulfuras` never changes and always keeps quality `80`
+- `Backstage passes` increase by:
+  - `1` when there are more than 10 days left
+  - `2` when there are 10 days or less
+  - `3` when there are 5 days or less
+  - `0` after the concert
+- `Conjured` items degrade twice as fast as normal items
 
-## History of the exercise
+## Technical Approach
 
-This Kata was originally created by Terry Hughes (http://twitter.com/TerryHughes). It is already on GitHub [here](https://github.com/NotMyself/GildedRose). Bobby Johnson described the kata in an article titled "Refactor This: The Gilded Rose Kata", but unfortunately it is no longer on the internet. I found it on the Wayback Machine [here](https://web.archive.org/web/20240525015111/https://iamnotmyself.com/refactor-this-the-gilded-rose-kata/).
+The code avoids over-engineering. The update flow is split by item category:
 
-I translated the original C# into a few other languages, (with a little help from my friends!), and slightly changed the starting position. This means I've actually done a small amount of refactoring already compared with the original form of the kata, and made it easier to get going with writing tests by giving you one failing unit test to start with. I also added test fixtures for Text-Based approval testing with TextTest (see [the TextTests](https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/main/texttests))
+- `Aged Brie`
+- `Backstage passes`
+- `Sulfuras`
+- normal items, including `Conjured`
 
-As Bobby Johnson points out in his article "Why Most Solutions to Gilded Rose Miss The Bigger Picture" (on the Wayback Machine [here](https://web.archive.org/web/20230530152324/https://iamnotmyself.com/why-most-solutions-to-gilded-rose-miss-the-bigger-picture/)), it'll actually give you
-better practice at handling a legacy code situation if you do this Kata in the original C#. However, I think this kata
-is also really useful for practicing writing good tests using different frameworks and approaches, and the small changes I've made help with that. I think it's also interesting to compare what the refactored code and tests look like in different programming languages.
+Helper methods are used only for rules that are repeated:
 
-## Contributing
+- quality increase with upper bound
+- quality decrease with lower bound
+- item type detection
 
-I have been struggling for some time with the maintenance burden for the Gilded Rose respository. I get frequent spurious pull requests from people who have been assigned to work on it as an exercise by some other organization (I don't know who) and mistakenly send me a pull request with their solution. I get so many of these it's a significant amount of work to check that they aren't a legitimate contribution. It's really annoying. I have sadly now added a restriction now so that only prior contributors can now open issues, comment, or create pull requests.
+## Setup
 
-If you would like to make an actual contribution that improves the starting position of the exercise, please see [CONTRIBUTING.md](./CONTRIBUTING.md) for some ideas about how to get involved.
+Requirements:
+
+- Node.js
+- pnpm
+
+Install dependencies:
+
+```bash
+cd js-jasmine
+pnpm install
+```
+
+## Run Tests
+
+```bash
+cd js-jasmine
+pnpm test
+```
+
+Expected result:
+
+```text
+13 specs, 0 failures
+```
+
+## Notes
+
+- The `Item` class was left unchanged, as required by the kata.
+- The repository is intentionally minimal and keeps only the files needed for this JavaScript/Jasmine exercise.
